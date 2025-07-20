@@ -1,7 +1,17 @@
 #pragma once
 #include <string>
 
-const size_t BLOCK_SIZE = 4096; // 4KB
+const size_t BLOCK_SIZE = 4096;       // 4KB block size
+const size_t MAX_RECORD_SIZE = 256;   // Max size of a single record
+
+struct Page {
+    int pageID;
+    int recordCount;
+    int freeSpaceOffset; // Offset for next record
+    char data[BLOCK_SIZE - sizeof(int) * 3];
+
+    Page(int id) : pageID(id), recordCount(0), freeSpaceOffset(0) {}
+};
 
 class StorageEngine {
 public:
@@ -10,4 +20,8 @@ public:
     static void closeStorageFile();
     static void writeBlock(int blockID, const char* data);
     static void readBlock(int blockID, char* buffer);
+    static void writePage(const Page& page);
+    static void readPage(int pageID, Page& page);
+    static bool insertRecord(int pageID, const char* record, size_t size);
+    static bool readRecord(int pageID, int recordIndex, char* buffer, size_t bufferSize);
 };
