@@ -1,62 +1,57 @@
 #include <iostream>
-#include "StorageEngine.h"
 #include <cstring>
+#include "StorageEngine.h"
 
 int main()
 {
-    std::cout << "AIDA Storage Engine Started 🚀" << std::endl;
+    std::cout << "AIDA Storage Engine Started 🚀\n";
 
-    // Create or open storage file
     StorageEngine::createStorageFile("mydb.aida", 10);
     if (!StorageEngine::openStorageFile("mydb.aida"))
         return 1;
 
-    // Insert records
-    const char *record1 = "Hello, AIDA Record 1";
-    const char *record2 = "Hello, AIDA Record 2";
-    const char *record3 = "Hello, AIDA Record 3";
+    // Insert a few records
+    const char *rec1 = "Hello, AIDA Record 1";
+    const char *rec2 = "Hello, AIDA Record 2";
+    const char *rec3 = "Hello, AIDA Record 3";
+    StorageEngine::insertRecord(1, rec1, strlen(rec1) + 1);
+    StorageEngine::insertRecord(1, rec2, strlen(rec2) + 1);
+    StorageEngine::insertRecord(1, rec3, strlen(rec3) + 1);
 
-    StorageEngine::insertRecord(1, record1, strlen(record1) + 1);
-    StorageEngine::insertRecord(1, record2, strlen(record2) + 1);
-    StorageEngine::insertRecord(1, record3, strlen(record3) + 1);
-
-    // Read records
-    char buffer[MAX_RECORD_SIZE];
-
-    std::cout << "\n🔍 Reading records after insertion:" << std::endl;
+    // Read them back
+    char buf[MAX_RECORD_SIZE];
+    std::cout << "\n🔍 Reading after insert:\n";
     for (int i = 0; i < 3; ++i)
     {
-        if (StorageEngine::readRecord(1, i, buffer, sizeof(buffer)))
-            std::cout << "Record " << i << ": " << buffer << std::endl;
+        if (StorageEngine::readRecord(1, i, buf, sizeof(buf)))
+            std::cout << "Record " << i << ": " << buf << "\n";
     }
 
-    // Delete Record 1
-    std::cout << "\n🗑️ Deleting Record 1..." << std::endl;
+    // Delete record 1
+    std::cout << "\n🗑️ Deleting record 1...\n";
     StorageEngine::deleteRecord(1, 1);
 
-    // Read records after deletion
-    std::cout << "\n🔍 Reading records after deletion:" << std::endl;
+    std::cout << "\n🔍 Reading after delete:\n";
     for (int i = 0; i < 3; ++i)
     {
-        if (StorageEngine::readRecord(1, i, buffer, sizeof(buffer)))
-            std::cout << "Record " << i << ": " << buffer << std::endl;
+        if (StorageEngine::readRecord(1, i, buf, sizeof(buf)))
+            std::cout << "Record " << i << ": " << buf << "\n";
         else
-            std::cout << "Record " << i << ": [Deleted or Not Found]" << std::endl;
+            std::cout << "Record " << i << ": [Deleted/Not Found]\n";
     }
 
-    // Update Record 2 (index 2)
-    const char *updatedRecord3 = "Hello, AIDA Record 3 UPDATED!";
-    std::cout << "\n✏️ Updating Record 2..." << std::endl;
-    StorageEngine::updateRecord(1, 2, updatedRecord3, strlen(updatedRecord3) + 1);
+    // Update record 2
+    const char *upd3 = "Hello, AIDA Record 3 UPDATED!";
+    std::cout << "\n✏️ Updating record 2...\n";
+    StorageEngine::updateRecord(1, 2, upd3, strlen(upd3) + 1);
 
-    // Read records after update
-    std::cout << "\n🔍 Reading records after update:" << std::endl;
+    std::cout << "\n🔍 Reading after update:\n";
     for (int i = 0; i < 4; ++i)
     {
-        if (StorageEngine::readRecord(1, i, buffer, sizeof(buffer)))
-            std::cout << "Record " << i << ": " << buffer << std::endl;
+        if (StorageEngine::readRecord(1, i, buf, sizeof(buf)))
+            std::cout << "Record " << i << ": " << buf << "\n";
         else
-            std::cout << "Record " << i << ": [Deleted or Not Found]" << std::endl;
+            std::cout << "Record " << i << ": [Deleted/Not Found]\n";
     }
 
     StorageEngine::closeStorageFile();
